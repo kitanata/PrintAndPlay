@@ -17,24 +17,26 @@ class BoardGame:
 
         self.link = "http://www.boardgamegeek.com" + title.a["href"]
         self.title = title.a.span.get_text()
-        self.year = title.span.get_text()[1:-1]
 
 
     def parse_information(self, mod):
         info = mod.find(class_="innermoduletable")
 
         link = info.find(class_='mt5')
-        self.img_collection_link = "http://www.boardgamegeek.com" + link.a["href"]
 
-        self.image = link.link["href"]
-        hash_img = hashlib.sha256(self.image).hexdigest()
+        if link.a:
+            self.img_collection_link = "http://www.boardgamegeek.com" + link.a["href"]
 
-        name, ext = splitext(self.image)
-        hash_img += ext
+        if link.link:
+            self.image = link.link["href"]
+            hash_img = hashlib.sha256(self.image).hexdigest()
 
-        #call(["wget", "-O " + hash_img, self.image])
+            name, ext = splitext(self.image)
+            hash_img += ext
 
-        self.image = hash_img
+            call(["wget", "-O " + hash_img, self.image])
+
+            self.image = hash_img
 
         items = info.find(class_='geekitem_infotable').find_all('tr')
 
@@ -72,14 +74,16 @@ class BoardGame:
                 continue
 
             elif name in ["category", "mechanic", "primary_name", "website",
-                "language_dependence", "user_suggested_ages", "year_published"]:
+                "language_dependence", "user_suggested_ages", "year_published", 
+                "family", "reimplements", "artist", "honors", "expansion",
+                "reimplemented_by", "expands", "contained_in"]:
                 el = item.td.next_sibling.next_sibling
                 self.process_a(name, el)
 
             else:
                 print(name)
                 print(item.prettify())
-                break
+                raise StopIteration
 
     def parse_description(self, mod):
         info = mod.find(class_="innermoduletable")
@@ -90,13 +94,23 @@ class BoardGame:
     def parse_files(self, mod):
         info = mod.find(class_="innermoduletable")
 
-        rows = info.find_all('tr')
+        data = info.find_all('td')
+
+        rows = [data[i:i+5] for i in range(0, len(data), 5)]
 
         self.files = []
         for r in rows:
-            text = '\n'.join(self.strip_out_text(r))
-            link = r.td.next_sibling.next_sibling.a["href"]
+            text = []
+            for td in r:
+                text.append(' '.join(self.strip_out_text(td)))
+            try:
+                link = r[1].a["href"]
+            except Exception as e:
+                return False
+
             self.files.append((text, link))
+
+        return True
 
 
     def parse_statistics(self, mod):
@@ -136,17 +150,58 @@ class BoardGame:
         setattr(self, name, (link, text))
 
 
+    def post_process(self):
+        if hasattr(self, "category"):
+            self.category = self.category.split('\n')
+
+        self.description = ' '.join(self.description.split('\n')[1:-1])
+        self.language_dependence = ' '.join(self.language_dependence.split('\n')[:-3])
+
+        if hasattr(self, 'mechanic'):
+            self.mechanic = self.mechanic.split('\n')
+
+        self.number_of_players = self.number_of_players.replace(u'\u00a0\u2212\u00a0', ' - ')
+        self.user_suggested_ages = ' '.join(self.user_suggested_ages.split('\n')[:-3])
+        self.user_suggested_number_of_players = ' '.join(self.user_suggested_number_of_players.split('\n')[:-3])
+
+        for stat, val in self.stats:
+            stat = stat.replace(':', ''
+                ).replace('.', ''
+                ).replace(u'\u00a0', ' '
+                ).replace(' ', '_').lower()
+            setattr(self, 'stat_' + stat, val)
+
+        delattr(self, 'stats')
+
+        attr_to_del = []
+        for attr, val in self.__dict__.iteritems():
+            if val == "(no votes yet)":
+                attr_to_del.append(attr)
+
+        for attr in attr_to_del:
+            delattr(self, attr)
+
+
 def main():
     path = getcwd()
     filenames = [ join(path, f) for f in listdir(path) if isfile(join(path,f)) ]
-    filenames = [filenames[0]]
+    filenames = [f for f in filenames if ".html" in f]
 
     documents = []
     for name in filenames:
         with open(name) as f:
             documents.append(f.read().replace('\n', ''))
 
-    game = parse_document(documents[0])
+    json_doc = []
+    for doc in documents:
+        game = parse_document(doc)
+        if game:
+            json_doc.append(game.__dict__)
+
+    with open('filedata.json', 'wo') as f:
+        f.write(json.dumps(json_doc, indent=4, sort_keys=True))
+
+    print("DONE!")
 
 
 def parse_document(doc):
@@ -155,7 +210,8 @@ def parse_document(doc):
     modules = soup.find_all(class_="geekitem_module")
 
     if len(modules) != 20:
-        print("Module length is " + len(modules) + " expected 20")
+        print("Module length is " + str(len(modules)) + " expected 20")
+        return None
 
     new_game = BoardGame()
 
@@ -172,12 +228,13 @@ def parse_document(doc):
             new_game.parse_description(mod)
 
         elif "files" in title.lower():
-            new_game.parse_files(mod)
+            if not new_game.parse_files(mod):
+                return None
 
         elif "statistics" in title.lower():
             new_game.parse_statistics(mod)
 
-    print json.dumps(new_game.__dict__, indent=4, sort_keys=True)
+    new_game.post_process()
 
     return new_game
 
