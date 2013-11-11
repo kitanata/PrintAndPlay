@@ -1,0 +1,28 @@
+<h1>Print and Play Upload Form</h1>
+
+<h2>Thank you for helping me!</h2>
+
+<ol>
+    <li>Copy and paste the <b>KeyID</b> from the HIT Request into the HIT KeyID Field Below</li>
+    <li>Make sure the you have compressed the files into a <b>zip</b> or <b>rar</b> archive.</li>
+    <li>Choose the file and upload it by clicking on the <b>choose file</b> button below.</li>
+    <li>Our automated system will verify the file uploaded successfuly and will give you a <b>confirmation code</b>.</li>
+    <li>You <b>MUST</b> copy this <b>confirmation code</b> into the HIT on amazon to be approved.</li>
+    <li>Once we verify the validity of the task we will approve the task on Mechanical Turk.</li>
+    <li>Requests will be automatically approved after 14 hours past completition.</li>
+</ol>
+
+<form method="POST" enctype=multipart/form-data action="{{ url_for('upload') }}">
+    <p>
+        <label for="key">The HIT <b>KeyID</b>:</label>
+        <input id="key" type="text" name="key">
+    </p>
+    <p>
+        <label for="file">Upload File Here:</label>
+        <input id="file" type="file" name="archive">
+    </p>
+
+    <input type="submit" value="Finish Upload" style="height:64px; font-size:32px; line-height:48px"/>
+</form>
+
+<h2>The <b>confirmation code</b> will show on the next page if the upload is successful.</h2>
