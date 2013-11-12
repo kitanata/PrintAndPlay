@@ -18,7 +18,8 @@ UPLOAD_DEST = '/Users/raymond/Projects/PrintAndPlay/upload'
 app.config["UPLOADED_FILES_DEST"] = UPLOAD_DEST
 app.config["UPLOADS_DEFAULT_DEST"] = UPLOAD_DEST
 
-archives = UploadSet('archives', ARCHIVES)
+
+archives = UploadSet('archives', ('gz', 'bz2', 'zip', 'tar', '7z', 'rar'))
 
 configure_uploads(app, (archives, ))
 
