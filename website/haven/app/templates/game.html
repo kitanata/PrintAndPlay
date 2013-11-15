@@ -1,0 +1,68 @@
+<div id="game" class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-8">
+        <a class="pull-left" href="{{game.link}}"><h2>{{game.title}}</h2></a>
+      </div>
+
+      <div class="col-md-4">
+        <div class="buttons pull-left">
+          <div class="btn-group">
+            <a href="#" class="btn btn-primary" role="button">Donate</a>
+            <a href="#" class="btn btn-default" role="button">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-md-8">
+    <div class="description">
+      <a class="pull-left img" href="{{game.img_collection_link}}">
+        <img class="img-thumbnail" src="/api/img/{{game.image}}" />
+      </a>
+      <p>{{game.description}}</p>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-4">
+    <div class="features">
+      <ul>
+        <li ng-hide="!game.user_suggested_number_of_players">
+          Number of Players: {{game.user_suggested_number_of_players}}
+        </li>
+        <li ng-show="!game.user_suggested_number_of_players">
+          Number of Players: {{game.number_of_players}}
+        </li>
+        <li ng-hide="!game.user_suggested_ages">
+          Suggested Ages: {{game.user_suggested_ages}}
+        </li>
+        <li ng-show="!game.user_suggested_ages">
+          Suggested Ages: {{game.manufacturer_suggested_ages}}
+        </li>
+        <li>Year Published: {{game.year_published}}</li>
+        <li>Playing Time: {{game.playing_time}}</li>
+        <li>Average BGG Rating: {{game.stat_average_rating}}</li>
+        <li><a href="{{game.link}}">Board Game Geek Page</a></li>
+        <li><a href="{{game.website}}"> Website</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!--
+        "category" : [
+          "Maze",
+          "Memory",
+          "Print & Play",
+          "Travel"
+        ],
+        "designer" : [
+          "/boardgamedesigner/10235/ryan-hackel",
+          "Ryan Hackel"
+        ],
+        "mechanic" : [
+          "Modular Board",
+          "Pick-up and Deliver"
+        ],
+  -->
+</div>

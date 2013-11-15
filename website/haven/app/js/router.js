@@ -17,9 +17,24 @@ angular.module("app").config(function($routeProvider, $locationProvider) {
     controller: 'GamesController'
   });
 
+  $routeProvider.when('/random', {
+    templateUrl: 'game.html',
+    controller: 'RandomGameDetailController'
+  });
+
+  $routeProvider.when('/game/:gameId', {
+    templateUrl: 'game.html',
+    controller: 'GameDetailController'
+  });
+
   $routeProvider.when('/contact', {
     templateUrl: 'contact.html',
     controller: 'ContactController'
+  });
+
+  $routeProvider.when('/contact-confirm', {
+    templateUrl: 'contact_confirm.html',
+    controller: 'SimpleController'
   });
 
   $routeProvider.when('/list-of-books', {
@@ -33,6 +48,6 @@ angular.module("app").config(function($routeProvider, $locationProvider) {
     // }
   });
 
-  $routeProvider.otherwise({ redirectTo: '/login' });
+  $routeProvider.otherwise({ redirectTo: '/home' });
 
 });

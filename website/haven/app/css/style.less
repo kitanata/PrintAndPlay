@@ -2,6 +2,10 @@ body {
   padding-top: 20px;
 }
 
+.container {
+  width: 1000px;
+}
+
 .footer {
   border-top: 1px solid #eee;
   margin-top: 40px;
@@ -16,7 +20,7 @@ body {
 }
 .jumbotron .btn {
   font-size: 21px;
-  padding: 14px 24px;
+  padding: 5px 24px;
 }
 
 /* Customize the nav-justified links to be fill the entire space of the .navbar */
@@ -60,7 +64,7 @@ body {
 
 @media (min-width: 768px) {
   .nav-justified {
-    max-height: 52px;
+    max-height: 59px;
   }
   .nav-justified > li > a {
     border-left: 1px solid #fff;
@@ -85,4 +89,72 @@ body {
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.game-list {
+  .row {
+    margin-top: 40px;
+  }
+
+  .game {
+    margin-top: 40px;
+
+    .img-container {
+      height: 200px;
+
+      img {
+        display: block;
+        margin: 20px auto 20px auto;
+      }
+    }
+
+    h3.title {
+      height: 74px;
+    }
+
+    p.description {
+      word-wrap: break-word;
+      height: 240px;
+    }
+  }
+
+  .thumbnail {
+    margin-bottom: 0px;
+  }
+}
+
+#game {
+  margin-top: 40px;
+
+  a.img {
+    padding-right: 20px;
+  }
+
+  .description {
+    p {
+      padding-right: 20px;
+    }
+  }
+
+  .features {
+    ul {
+      list-style-type: none;
+    }
+  }
+
+  .buttons {
+    padding-top: 16px;
+  }
+}
+
+.red {
+  border: 1px solid red;
+}
+
+.blue {
+  border: 1px solid blue;
+}
+
+.green {
+  border: 1px solid green;
 }
